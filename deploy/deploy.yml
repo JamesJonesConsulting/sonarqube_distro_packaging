@@ -1,11 +1,9 @@
 - name: Deploy SonarQube rpm package
-  hosts: all
-  connection: local
+  hosts: "{{ target_group }}"
+  # connection: local
   vars_files:
     - ./vars/main.yml
   tasks:
-    - name: Process Helm repos
-      ansible.builtin.include_tasks: tasks/helm.yml
-      loop: "{{ helm_repos }}"
-      loop_control:
-        loop_var: _helm_repo
+    - name: Debug vars
+      ansible.builtin.debug:
+        msg: "{{ target_group }}"
