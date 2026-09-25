@@ -17,6 +17,7 @@ parameters:
     default: home
     values:
       - home
+trigger: none
 # trigger:
 #   branches:
 #     include:

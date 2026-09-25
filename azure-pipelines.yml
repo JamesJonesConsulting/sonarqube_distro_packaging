@@ -8,6 +8,7 @@ parameters:
     displayName: SonarQube Download version
     type: string
     default: 26.9.0.129388
+trigger: none
 
 # trigger:
 #   branches:
