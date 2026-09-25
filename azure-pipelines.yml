@@ -62,7 +62,7 @@ steps:
   #     VAULT_KEY: $(ansible_vault_key)
   - bash: |
       curl -L https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-${{ parameters.version }}.zip > sonarqube.zip
-      unzip sonarqube.zip -d
+      unzip sonarqube.zip
       mv sonarqube-${{ parameters.version }} sonarqube
     workingDirectory: $(Build.SourcesDirectory)/pipeline
     displayName: Download and extra SonarQube zip
