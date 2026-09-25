@@ -60,9 +60,6 @@ steps:
     path: s/inventory
   - checkout: vault
     path: s/vault
-  - script: echo Hello, world!
-    displayName: 'Run a one-line script'
-
   - script: |
       eval $(ssh-agent); ssh-add <(echo "${SSH_KEY}" | base64 -d);
       echo -n "${VAULT_KEY}" | base64 -d > $(Agent.TempDirectory)/.vault
