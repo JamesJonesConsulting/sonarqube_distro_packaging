@@ -52,6 +52,7 @@ done
 # Ensure the installed SonarQube files are readable by the service account.
 chown -R "${SERVICE_USER}:${SERVICE_GROUP}" "${SONARQUBE_HOME}"
 
+chmod +x /opt/sonarqube/bin/linux-x86-64/sonar.sh
 systemctl daemon-reload
 
 exit 0
