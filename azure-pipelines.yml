@@ -100,7 +100,7 @@ steps:
         --url "https://github.com/JamesJonesConsulting/sonarqube_distro_packaging" \
         --license "LGPL3.0" --vendor "James Jones" \
         --config-files /opt/sonarqube/conf/sonar.properties \
-        ./sonarqube=/opt/sonarqube \
+        ./sonarqube/.=/opt/sonarqube \
         ./sonar.properties=/opt/sonarqube/conf/sonar.properties
 
     displayName: Build the RPM package
