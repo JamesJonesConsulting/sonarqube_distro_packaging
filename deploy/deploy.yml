@@ -23,4 +23,18 @@
       ansible.builtin.dnf:
         name: sonarqube
         update_cache: true
-        state: latest 
+        state: latest
+    - name: Update sonar.properties with the correct JDBC URL
+      ansible.builtin.ini_file:
+        path: /opt/sonarqube/conf/sonar.properties
+        option: "{{ setting.option }}"
+        value: "{{ setting.value }}"
+      loop:
+        - option: sonar.jdbc.username
+          value: "{{ sonarqube_pg_user }}"
+        - option: sonar.jdbc.password
+          value: "{{ sonarqube_pg_pass }}"
+        - option: sonar.jdbc.url
+          value: "jdbc:postgresql://{{ sonarqube_host }}:{{ sonarqube_port }}/{{ sonarqube_db }}?currentSchema=public"
+      loop_control:
+        loop_var: setting
