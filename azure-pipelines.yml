@@ -115,7 +115,7 @@ steps:
     workingDirectory: $(Build.SourcesDirectory)/pipeline
   - bash: |
       set -euo pipefail
-      find ./ -type f -name '*.rpm'
+
       rpm_path="$(find . -maxdepth 1 -type f -name '*.rpm' -print -quit)"
 
       if [[ -z "$rpm_path" ]]; then
@@ -143,7 +143,7 @@ steps:
       upload_url="https://$(nexus_host)/repository/${repository}/${rpm_name}"
 
       echo "Uploading ${rpm_name} to ${repository}..."
-      echo "${NEXUS_USERNAME}"
+
       curl \
         --fail \
         --silent \
