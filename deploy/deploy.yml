@@ -5,9 +5,8 @@
     - ./vars/main.yml
   pre_tasks:
     - name: Ensure python3-libdnf5 is installed on the target hosts
-      ansible.builtin.package:
-        name: python3-libdnf5
-        state: present
+      ansible.builtin.command:
+        cmd: dnf install -y python3-libdnf5
   tasks:
     - name: Setup SonarQube Nexus repository
       ansible.builtin.copy:
