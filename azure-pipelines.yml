@@ -82,11 +82,8 @@ steps:
         # Replace "/" with "-"
         branch="${branch//\//-}"
 
-        # Get the application version
-        version="$(dist/voterwarehouse -v)"
-
         # Prepend the version and "~" to the branch name
-        refName="${{ parameters.version }}~${version}-${branch}"
+        refName="${{ parameters.version }}~${branch}"
 
         echo "Branch: $refName"
         echo "##vso[task.setvariable variable=gitRefType]branch"
