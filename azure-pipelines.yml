@@ -105,6 +105,7 @@ steps:
         --before-install ./defaults/sonarqube-install.sh \
         --after-install ./defaults/sonarqube-install.sh \
         --after-upgrade ./defaults/sonarqube-install.sh \
+        -d "java-25-openjdk" \
         ./sonarqube/.=/opt/sonarqube \
         ./defaults/sonar.properties=/opt/sonarqube/conf/sonar.properties \
         ./defaults/99-sonarqube.conf=/etc/sysctl.d/99-sonarqube.conf \
