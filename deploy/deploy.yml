@@ -27,6 +27,7 @@
     - name: Update sonar.properties with the correct JDBC URL
       ansible.builtin.ini_file:
         path: /opt/sonarqube/conf/sonar.properties
+        no_extra_spaces: true
         option: "{{ setting.option }}"
         value: "{{ setting.value }}"
       loop:
