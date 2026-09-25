@@ -2,7 +2,21 @@
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
-
+parameters:
+  - name: version
+    displayName: SonarQube Download version
+    type: string
+    default: 26.9.0.129388
+  - name: target_group
+    displayName: Target group for deployment
+    type: string
+    default: sonarqube
+  - name: inventory
+    displayName: Ansible inventory to use for deployment
+    type: string
+    default: home
+    values:
+      - home
 # trigger:
 #   branches:
 #     include:
@@ -51,7 +65,10 @@ steps:
   - script: |
       echo Add other tasks to build, test, and deploy your project.
       echo See https://aka.ms/yaml
-      ls -all $(Build.SourcesDirectory)/inventory/home
-      # ansible-playbook -i $(Build.SourcesDirectory)/inventory/home/hosts deploy/deploy.yml
+      ls -all $(Build.SourcesDirectory)/inventory/${{ parameters.inventory }}
+      ansible-playbook \
+        -i $(Build.SourcesDirectory)/inventory/${{ parameters.inventory }}/hosts \
+        deploy/deploy.yml
+        -e "target_group=${{ parameters.target_group }}"
     displayName: 'Run a multi-line script'
     workingDirectory: $(Build.SourcesDirectory)/pipeline
