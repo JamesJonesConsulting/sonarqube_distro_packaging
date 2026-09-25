@@ -99,16 +99,16 @@ steps:
         --url "https://github.com/JamesJonesConsulting/sonarqube_distro_packaging" \
         --license "LGPL3.0" --vendor "James Jones" \
         --config-files /opt/sonarqube/conf/sonar.properties \
-        -p ./dist \
         ./sonarqube=/opt/sonarqube \
         ./sonar.properties=/opt/sonarqube/conf/sonar.properties
+  # -p ./dist \
 
     displayName: Build the RPM package
     workingDirectory: $(Build.SourcesDirectory)/pipeline
   - bash: |
       set -euo pipefail
       find ./ -type f -name '*.rpm'
-      rpm_path="$(find ./dist -maxdepth 1 -type f -name '*.rpm' -print -quit)"
+      rpm_path="$(find . -maxdepth 1 -type f -name '*.rpm' -print -quit)"
 
       if [[ -z "$rpm_path" ]]; then
         echo "No RPM file found in ./dist" >&2
