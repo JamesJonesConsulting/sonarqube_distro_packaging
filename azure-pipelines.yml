@@ -105,4 +105,49 @@ steps:
 
     displayName: Build the RPM package
     workingDirectory: $(Build.SourcesDirectory)/pipeline
+  - bash: |
+      set -euo pipefail
 
+      rpm_path="$(find ./dist -maxdepth 1 -type f -name '*.rpm' -print -quit)"
+
+      if [[ -z "$rpm_path" ]]; then
+        echo "No RPM file found in ./dist" >&2
+        exit 1
+      fi
+
+      rpm_name="$(basename "$rpm_path")"
+
+      echo "RPM path: $rpm_path"
+      echo "RPM name: $rpm_name"
+
+      # Make the path available to later Azure DevOps tasks
+      echo "##vso[task.setvariable variable=rpmPath]$rpm_path"
+      echo "##vso[task.setvariable variable=rpmName]$rpm_name"
+    displayName: Find produced RPM
+    workingDirectory: $(Build.SourcesDirectory)/pipeline
+  - bash: |
+      set -euo pipefail
+
+      repository="yum-hosted-arch/main/x86_64"
+      rpm_path="$(rpmPath)"
+      rpm_name="$(rpmName)"
+
+      upload_url="https://$(nexus_host)/repository/${repository}/${rpm_name}"
+
+      echo "Uploading ${rpm_name} to ${repository}..."
+      echo "${NEXUS_USERNAME}"
+      curl \
+        --fail \
+        --silent \
+        --show-error \
+        --location \
+        --user "${NEXUS_USERNAME}:${NEXUS_PASSWORD}" \
+        --upload-file "$rpm_path" \
+        "$upload_url"
+
+      echo "Successfully uploaded ${rpm_name}"
+    displayName: Publish RPM to Nexus
+    workingDirectory: $(Build.SourcesDirectory)/pipeline
+    env:
+      NEXUS_USERNAME: $(nexus_publish_user)
+      NEXUS_PASSWORD: $(nexus_publish_pass)
