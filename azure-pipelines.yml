@@ -65,7 +65,7 @@ steps:
       curl -L https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-${{ parameters.version }}.zip > sonarqube.zip
       unzip sonarqube.zip
       mv sonarqube-${{ parameters.version }} sonarqube
-      mv sonarqube/conf/sonar.properties .
+      mv sonarqube/conf/sonar.properties defaults/sonar.properties
     workingDirectory: $(Build.SourcesDirectory)/pipeline
     displayName: Download and extra SonarQube zip
   - bash: |
@@ -100,8 +100,16 @@ steps:
         --url "https://github.com/JamesJonesConsulting/sonarqube_distro_packaging" \
         --license "LGPL3.0" --vendor "James Jones" \
         --config-files /opt/sonarqube/conf/sonar.properties \
+        --config-files /etc/sysctl.d/99-sonarqube.conf \
+        --config-files /etc/sysconfig/sonarqube \
+        --before-install ./defaults/sonarqube-install.sh \
+        --after-install ./defaults/sonarqube-install.sh \
+        --after-upgrade ./defaults/sonarqube-install.sh \
         ./sonarqube/.=/opt/sonarqube \
-        ./sonar.properties=/opt/sonarqube/conf/sonar.properties
+        ./defaults/sonar.properties=/opt/sonarqube/conf/sonar.properties \
+        ./defaults/99-sonarqube.conf=/etc/sysctl.d/99-sonarqube.conf \
+        ./defaults/sonarqube.service=/etc/systemd/system/sonarqube.service \
+        ./defaults/sonarqube.sysconfig=/etc/sysconfig/sonarqube
 
     displayName: Build the RPM package
     workingDirectory: $(Build.SourcesDirectory)/pipeline

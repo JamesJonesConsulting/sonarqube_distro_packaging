@@ -1,0 +1,28 @@
+[Unit]
+Description=SonarQube service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=forking
+EnvironmentFile=-/etc/sysconfig/sonarqube
+
+User=sonarqube
+Group=sonarqube
+WorkingDirectory=/opt/sonarqube
+
+ExecStart=/opt/sonarqube/bin/linux-x86-64/sonar.sh start
+ExecStop=/opt/sonarqube/bin/linux-x86-64/sonar.sh stop
+ExecReload=/opt/sonarqube/bin/linux-x86-64/sonar.sh restart
+
+Restart=on-failure
+RestartSec=10
+TimeoutStartSec=300
+TimeoutStopSec=300
+
+LimitNOFILE=131072
+LimitNPROC=8192
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
