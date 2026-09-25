@@ -2,8 +2,8 @@
 name=SonarQube related packages provided by James Jones Consulting
 baseurl=https://nexus.jamesjonesconsulting.com/repository/yum-hosted-arch/sonarqube/$basearch/
 enabled=1
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-jamesjonesconsulting
+gpgcheck=0
+# gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-jamesjonesconsulting
 type=rpm-md
 repo_gpgcheck=0
 priority=1
