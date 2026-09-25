@@ -4,6 +4,14 @@
   vars_files:
     - ./vars/main.yml
   tasks:
-    - name: Debug vars
-      ansible.builtin.debug:
-        msg: "{{ target_group }}"
+    - name: Setup SonarQube Nexus repository
+      ansible.builtin.copy:
+        src: files/sonarqube.repo
+        dest: /etc/yum.repos.d/sonarqube.repo
+        owner: root
+        group: root
+        mode: '0644'
+    - name: Install SonarQube package
+      ansible.builtin.yum:
+        name: sonarqube
+        state: latest 
