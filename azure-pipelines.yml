@@ -64,6 +64,7 @@ steps:
       curl -L https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-${{ parameters.version }}.zip > sonarqube.zip
       unzip sonarqube.zip
       mv sonarqube-${{ parameters.version }} sonarqube
+      mv sonarqube/conf/sonar.properties .
     workingDirectory: $(Build.SourcesDirectory)/pipeline
     displayName: Download and extra SonarQube zip
   - bash: |
@@ -71,6 +72,8 @@ steps:
         tag="${BUILD_SOURCEBRANCH#refs/tags/}"
 
         echo "Tag: $tag"
+        refName="${{ parameters.version }}.${tag}"
+
         echo "##vso[task.setvariable variable=gitRefType]tag"
         echo "##vso[task.setvariable variable=gitRefName]$tag"
       else
@@ -83,7 +86,7 @@ steps:
         version="$(dist/voterwarehouse -v)"
 
         # Prepend the version and "~" to the branch name
-        refName="${version}~${branch}"
+        refName="${{ parameters.version }}~${version}-${branch}"
 
         echo "Branch: $refName"
         echo "##vso[task.setvariable variable=gitRefType]branch"
@@ -95,24 +98,13 @@ steps:
       echo "Reference type: $(gitRefType)"
       echo "Reference name: $(gitRefName)"
       fpm -s dir -t rpm -n sonarqube -v $(gitRefName) --iteration $(Build.BuildNumber) \
-        --description "VoterWarehouse: Imports and Extracts Voter and History data" \
-        --url "https://github.com/jamjon3/VoterWarehouse" \
+        --description "SonarQube Community Edition" \
+        --url "https://github.com/JamesJonesConsulting/sonarqube_distro_packaging" \
         --license "LGPL3.0" --vendor "James Jones" \
         --config-files /opt/sonarqube/conf/sonar.properties \
         -p ./dist \
         ./sonarqube=/opt/sonarqube \
-        ./config.sample.yml=/etc/VoterWarehouse/config.yml
-
-      fpm -s dir -t rpm \
-        -n 'jamesjonesconsulting-repos' \
-        -v "1.0.1" \
-        -a all \
-        --iteration "$CI_PIPELINE_ID" \
-        --description 'Yum repositories provided by JamesJonesConsulting' \
-        --vendor 'jamesjonesconsulting' \
-        --config-files /etc/yum.repos.d/jamesjonesconsulting.repo \
-        ./yum.repos.d/jamesjonesconsulting.repo=/etc/yum.repos.d/jamesjonesconsulting.repo \
-        ./key.gpg=/etc/pki/rpm-gpg/RPM-GPG-KEY-jamesjonesconsulting
+        ./sonar.properties=/opt/sonarqube/conf/sonar.properties
 
     displayName: Build the RPM package
     workingDirectory: $(Build.SourcesDirectory)/pipeline
