@@ -39,3 +39,41 @@
           value: "jdbc:postgresql://{{ sonarqube_host }}:{{ sonarqube_port }}/{{ sonarqube_db }}?currentSchema=public"
       loop_control:
         loop_var: setting
+    - name: Ensure the SonarQube Keystore directory exists
+      ansible.builtin.file:
+        path: "{{ sonarqube_keystore_file | dirname }}"
+        state: directory
+        owner: "{{ sonarqube_user }}"
+        group: "{{ sonarqube_group }}"
+        mode: "0750"
+    - name: Ensure any exiting keystore file is removed before creating a new one
+      ansible.builtin.file:
+        path: "{{ sonarqube_keystore_file }}"
+        state: absent
+    - name: Create PKCS#12 keystore
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - pkcs12
+          - -export
+          - -out
+          - "{{ sonarqube_keystore_file }}"
+          - -inkey
+          - "{{ sonarqube_tls_key }}"
+          - -in
+          - "{{ sonarqube_tls_cert }}"
+          - -certfile
+          - "{{ sonarqube_tls_ca_chain }}"
+          - -name
+          - "{{ sonarqube_https_alias }}"
+          - -passout
+          - "pass:{{ sonarqube_keystore_password }}"
+      args:
+        creates: "{{ sonarqube_keystore_file }}"
+      no_log: true
+    - name: Ensure the SonarQube keystore is owned by the SonarQube service account
+      ansible.builtin.file:
+        path: "{{ sonarqube_keystore_file }}"
+        owner: "{{ sonarqube_user }}"
+        group: "{{ sonarqube_group }}"
+        mode: "0640"
