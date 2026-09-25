@@ -52,14 +52,68 @@ steps:
   - checkout: vault
     path: s/vault
 
+  # - bash: |
+  #     eval $(ssh-agent); ssh-add <(echo "${SSH_KEY}" | base64 -d);
+  #     echo -n "${VAULT_KEY}" | base64 -d > $(Agent.TempDirectory)/.vault
+  #   workingDirectory: $(Build.SourcesDirectory)/pipeline
+  #   displayName: Connect to host and setup Azure DevOps agent with Podman
+  #   env:
+  #     SSH_KEY: $(default_ssh_key)
+  #     VAULT_KEY: $(ansible_vault_key)
   - bash: |
-      eval $(ssh-agent); ssh-add <(echo "${SSH_KEY}" | base64 -d);
-      echo -n "${VAULT_KEY}" | base64 -d > $(Agent.TempDirectory)/.vault
       curl -L https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-${{ parameters.version }}.zip > sonarqube.zip
-      unzip sonarqube.zip -d ./sonarqube
+      unzip sonarqube.zip -d
+      mv sonarqube-${{ parameters.version }} sonarqube
     workingDirectory: $(Build.SourcesDirectory)/pipeline
-    displayName: Connect to host and setup Azure DevOps agent with Podman
-    env:
-      SSH_KEY: $(default_ssh_key)
-      VAULT_KEY: $(ansible_vault_key)
+    displayName: Download and extra SonarQube zip
+  - bash: |
+      if [[ "$BUILD_SOURCEBRANCH" == refs/tags/* ]]; then
+        tag="${BUILD_SOURCEBRANCH#refs/tags/}"
+
+        echo "Tag: $tag"
+        echo "##vso[task.setvariable variable=gitRefType]tag"
+        echo "##vso[task.setvariable variable=gitRefName]$tag"
+      else
+        branch="${BUILD_SOURCEBRANCH#refs/heads/}"
+
+        # Replace "/" with "-"
+        branch="${branch//\//-}"
+
+        # Get the application version
+        version="$(dist/voterwarehouse -v)"
+
+        # Prepend the version and "~" to the branch name
+        refName="${version}~${branch}"
+
+        echo "Branch: $refName"
+        echo "##vso[task.setvariable variable=gitRefType]branch"
+        echo "##vso[task.setvariable variable=gitRefName]$refName"
+      fi
+    displayName: Get version and normalized tag or branch name
+    workingDirectory: $(Build.SourcesDirectory)/pipeline
+  - bash: |
+      echo "Reference type: $(gitRefType)"
+      echo "Reference name: $(gitRefName)"
+      fpm -s dir -t rpm -n sonarqube -v $(gitRefName) --iteration $(Build.BuildNumber) \
+        --description "VoterWarehouse: Imports and Extracts Voter and History data" \
+        --url "https://github.com/jamjon3/VoterWarehouse" \
+        --license "LGPL3.0" --vendor "James Jones" \
+        --config-files /opt/sonarqube/conf/sonar.properties \
+        -p ./dist \
+        ./sonarqube=/opt/sonarqube \
+        ./config.sample.yml=/etc/VoterWarehouse/config.yml
+
+      fpm -s dir -t rpm \
+        -n 'jamesjonesconsulting-repos' \
+        -v "1.0.1" \
+        -a all \
+        --iteration "$CI_PIPELINE_ID" \
+        --description 'Yum repositories provided by JamesJonesConsulting' \
+        --vendor 'jamesjonesconsulting' \
+        --config-files /etc/yum.repos.d/jamesjonesconsulting.repo \
+        ./yum.repos.d/jamesjonesconsulting.repo=/etc/yum.repos.d/jamesjonesconsulting.repo \
+        ./key.gpg=/etc/pki/rpm-gpg/RPM-GPG-KEY-jamesjonesconsulting
+
+    displayName: Build the RPM package
+    workingDirectory: $(Build.SourcesDirectory)/pipeline
 
