@@ -70,7 +70,8 @@ steps:
         -i $(Build.SourcesDirectory)/inventory/${{ parameters.inventory }}/hosts \
         --vault-password-file $(Agent.TempDirectory)/.vault \
         $(Build.SourcesDirectory)/pipeline/deploy/deploy.yml \
-        -e "target_group=${{ parameters.target_group }}"
+        -e "target_group=${{ parameters.target_group }}" \
+        -b
     env:
       SSH_KEY: $(default_ssh_key)
       VAULT_KEY: $(ansible_vault_key)
