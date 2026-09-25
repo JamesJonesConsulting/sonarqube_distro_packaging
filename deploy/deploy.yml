@@ -15,6 +15,10 @@
         owner: root
         group: root
         mode: '0644'
+    - name: Clean all DNF caches
+      ansible.builtin.command:
+        cmd: dnf clean all
+      changed_when: true
     - name: Install SonarQube package
       ansible.builtin.dnf:
         name: sonarqube

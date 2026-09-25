@@ -75,5 +75,5 @@ steps:
     env:
       SSH_KEY: $(default_ssh_key)
       VAULT_KEY: $(ansible_vault_key)
-    displayName: 'Run a multi-line script'
+    displayName: 'Setup SonarQube package on target hosts'
     workingDirectory: $(Build.SourcesDirectory)/pipeline
