@@ -5,6 +5,8 @@
 
 parameters:
   - name: version
+    displayName: SonarQube Download version
+    type: string
     default: 26.9.0.129388
 
 # trigger:
@@ -53,7 +55,7 @@ steps:
   - bash: |
       eval $(ssh-agent); ssh-add <(echo "${SSH_KEY}" | base64 -d);
       echo -n "${VAULT_KEY}" | base64 -d > $(Agent.TempDirectory)/.vault
-      curl -L https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-26.9.0.129388.zip > sonarqube.zip
+      curl -L https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-${{ parameters.version }}.zip > sonarqube.zip
       unzip sonarqube.zip -d ./sonarqube
     workingDirectory: $(Build.SourcesDirectory)/pipeline
     displayName: Connect to host and setup Azure DevOps agent with Podman
