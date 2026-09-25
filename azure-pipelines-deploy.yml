@@ -39,6 +39,12 @@ variables:
     value: nexus.jamesjonesconsulting.com
 
 steps:
+  - checkout: self 
+    path: s/pipeline
+  - checkout: inventory
+    path: s/inventory
+  - checkout: vault
+    path: s/vault
   - script: echo Hello, world!
     displayName: 'Run a one-line script'
 
