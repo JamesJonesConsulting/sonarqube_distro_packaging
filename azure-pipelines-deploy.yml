@@ -3,11 +3,40 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-trigger:
-- main
+# trigger:
+#   branches:
+#     include:
+#       - feature/*
+#       - release/*
+#   tags:
+#     include:
+#       - '*'
+# pr:
+#   branches:
+#     include:
+#       - develop
 
-pool:
-  vmImage: ubuntu-latest
+resources:
+  repositories:
+    - repository: inventory
+      type: github
+      name: JamesJonesConsulting/AnsibleInventory
+      endpoint: JamesJonesConsulting      
+    - repository: vault
+      type: github
+      name: JamesJonesConsulting/AnsibleVault
+      endpoint: JamesJonesConsulting
+  containers:
+    - container: podman-dind
+      image: nexus.jamesjonesconsulting.com:5443/jamesjonesconsulting/podman-dind-like:latest
+      endpoint: JamesJonesConsultingDockerNexusHosted
+      options: --userns=keep-id --privileged --user root
+pool: FedoraHosted
+container: podman-dind
+variables:
+  - group: Connections
+  - name: ARTIFACTORY_HOST
+    value: nexus.jamesjonesconsulting.com
 
 steps:
 - script: echo Hello, world!
