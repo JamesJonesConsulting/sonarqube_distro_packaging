@@ -102,7 +102,6 @@ steps:
         --config-files /opt/sonarqube/conf/sonar.properties \
         ./sonarqube=/opt/sonarqube \
         ./sonar.properties=/opt/sonarqube/conf/sonar.properties
-  # -p ./dist \
 
     displayName: Build the RPM package
     workingDirectory: $(Build.SourcesDirectory)/pipeline
@@ -129,7 +128,7 @@ steps:
   - bash: |
       set -euo pipefail
 
-      repository="yum-hosted-arch/main/x86_64"
+      repository="yum-hosted-arch/sonarqube/x86_64"
       rpm_path="$(rpmPath)"
       rpm_name="$(rpmName)"
 
