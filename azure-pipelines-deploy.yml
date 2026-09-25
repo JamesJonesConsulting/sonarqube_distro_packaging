@@ -70,5 +70,8 @@ steps:
         -i $(Build.SourcesDirectory)/inventory/${{ parameters.inventory }}/hosts \
         deploy/deploy.yml \
         -e "target_group=${{ parameters.target_group }}"
+    env:
+      SSH_KEY: $(default_ssh_key)
+      VAULT_KEY: $(ansible_vault_key)
     displayName: 'Run a multi-line script'
     workingDirectory: $(Build.SourcesDirectory)/pipeline
