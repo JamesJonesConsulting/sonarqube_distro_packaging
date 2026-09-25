@@ -64,9 +64,8 @@ steps:
     displayName: 'Run a one-line script'
 
   - script: |
-      echo Add other tasks to build, test, and deploy your project.
-      echo See https://aka.ms/yaml
-      ls -all $(Build.SourcesDirectory)/inventory/${{ parameters.inventory }}
+      eval $(ssh-agent); ssh-add <(echo "${SSH_KEY}" | base64 -d);
+      echo -n "${VAULT_KEY}" | base64 -d > $(Agent.TempDirectory)/.vault
       ansible-playbook \
         -i $(Build.SourcesDirectory)/inventory/${{ parameters.inventory }}/hosts \
         deploy/deploy.yml \
