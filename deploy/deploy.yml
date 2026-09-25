@@ -16,7 +16,7 @@
         group: root
         mode: '0644'
     - name: Install SonarQube package
-      ansible.builtin.yum:
+      ansible.builtin.dnf:
         name: sonarqube
         update_cache: true
         state: latest 
