@@ -107,7 +107,7 @@ steps:
     workingDirectory: $(Build.SourcesDirectory)/pipeline
   - bash: |
       set -euo pipefail
-
+      find ./ -maxdepth 1 -type f -name '*.rpm'
       rpm_path="$(find ./dist -maxdepth 1 -type f -name '*.rpm' -print -quit)"
 
       if [[ -z "$rpm_path" ]]; then
