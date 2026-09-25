@@ -1,0 +1,57 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  branches:
+    include:
+      - feature/*
+      - release/*
+  tags:
+    include:
+      - '*'
+pr:
+  branches:
+    include:
+      - develop
+
+resources:
+  repositories:
+    - repository: inventory
+      type: github
+      name: JamesJonesConsulting/AnsibleInventory
+      endpoint: JamesJonesConsulting      
+    - repository: vault
+      type: github
+      name: JamesJonesConsulting/AnsibleVault
+      endpoint: JamesJonesConsulting
+  containers:
+    - container: podman-dind
+      image: nexus.jamesjonesconsulting.com:5443/jamesjonesconsulting/podman-dind-like:latest
+      endpoint: JamesJonesConsultingDockerNexusHosted
+      options: --userns=keep-id --privileged --user root
+pool: FedoraHosted
+container: podman-dind
+variables:
+  - group: Connections
+  - name: ARTIFACTORY_HOST
+    value: nexus.jamesjonesconsulting.com
+
+steps:
+  - checkout: self 
+    path: s/pipeline
+  - checkout: inventory
+    path: s/inventory
+  - checkout: vault
+    path: s/vault
+
+  - bash: |
+      eval $(ssh-agent); ssh-add <(echo "${SSH_KEY}" | base64 -d);
+      echo -n "${VAULT_KEY}" | base64 -d > $(Agent.TempDirectory)/.vault
+    workingDirectory: $(Build.SourcesDirectory)/pipeline
+    displayName: Connect to host and setup Azure DevOps agent with Podman
+    env:
+      SSH_KEY: $(default_ssh_key)
+      VAULT_KEY: $(ansible_vault_key)
+
