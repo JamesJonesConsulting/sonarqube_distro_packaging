@@ -6,8 +6,8 @@
   tasks:
     - name: Setup SonarQube Nexus repository
       ansible.builtin.copy:
-        src: files/sonarqube.repo
-        dest: /etc/yum.repos.d/sonarqube.repo
+        src: files/nexus-sonarqube.repo
+        dest: /etc/yum.repos.d/nexus-sonarqube.repo
         owner: root
         group: root
         mode: '0644'
