@@ -48,7 +48,7 @@
         - option: sonar.web.https.keyStorePassword
           value: "{{ sonarqube_keystore_password }}"
         - option: sonar.web.port
-          value: "-1"
+          value: "9000"
       loop_control:
         loop_var: setting
     - name: Ensure the SonarQube Keystore directory exists
