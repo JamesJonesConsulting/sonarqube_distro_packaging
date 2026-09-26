@@ -36,7 +36,11 @@
         - option: sonar.jdbc.password
           value: "{{ sonarqube_pg_pass }}"
         - option: sonar.jdbc.url
-          value: "jdbc:postgresql://{{ sonarqube_host }}:{{ sonarqube_port }}/{{ sonarqube_db }}?currentSchema=public"
+          value: "jdbc:postgresql://{{ sonarqube_db_host }}:{{ sonarqube_db_port }}/{{ sonarqube_db }}?currentSchema=public"
+        - option: sonar.web.port
+          value: "{{ sonarqube_port }}"
+        - option: sonar.web.host
+          value: "0.0.0.0"
         - option: sonar.web.https.port
           value: "{{ sonarqube_https_port }}"
         - option: sonar.web.ssl.port
@@ -49,10 +53,6 @@
           value: PKCS12
         - option: sonar.web.https.keyPass
           value: "{{ sonarqube_keystore_password }}"
-        - option: sonar.web.port
-          value: "9000"
-        - option: sonar.web.host
-          value: "0.0.0.0"
       loop_control:
         loop_var: setting
     - name: Update sysctl values
@@ -112,4 +112,10 @@
         enabled: true
         state: restarted
         daemon_reload: true
-  /etc/nginx/conf.d/sonarqube.conf
+    - name: Add SonarQube Nginx configuration
+      ansible.builtin.copy:
+        src: templates/sonarqube-nginx.conf
+        dest: /etc/nginx/conf.d/sonarqube.conf
+        owner: root
+        group: root
+        mode: '0644'

@@ -1,5 +1,7 @@
-sonarqube_host: jamdb.jamesjonesconsulting.com
-sonarqube_port: 5432
+sonarqube_db_host: jamdb.jamesjonesconsulting.com
+sonarqube_db_port: 5432
+sonarqube_host: sonarqube.jamesjonesconsulting.com
+sonarqube_port: 9000
 sonarqube_db: sonarqube
 sonarqube_pg_user: sonarqube
 sonarqube_pg_pass: !vault |
