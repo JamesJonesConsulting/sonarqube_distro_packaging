@@ -1,0 +1,41 @@
+---
+- name: Download Branch Plugin
+  ansible.builtin.get_url:
+    url: "https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/{{ sonarqube_branch_plugin_version }}/sonarqube-community-branch-plugin-{{ sonarqube_branch_plugin_version }}.jar"
+    dest: "/opt/sonarqube/extensions/plugins/sonarqube-community-branch-plugin-{{ sonarqube_branch_plugin_version }}.jar"
+    mode: '0644'
+- name: Remove the existing web folder
+  ansible.builtin.file:
+    path: /opt/sonarqube/web
+    state: "{{ state }}"
+    owner: sonarqube
+    group: sonarqube
+  loop:
+    - absent
+    - directory
+  loop_control:
+    loop_var: state
+- name: Unzip Web App
+  ansible.builtin.unarchive:
+    src: "https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/{{ sonarqube_branch_plugin_version }}/sonarqube-webapp.zip"
+    dest: /opt/sonarqube/web
+    remote_src: true
+    owner: sonarqube
+    group: sonarqube
+- name: Update sonar.properties with the correct JDBC URL
+  community.general.ini_file:
+    path: /opt/sonarqube/conf/sonar.properties
+    no_extra_spaces: true
+    option: "{{ setting.option }}"
+    value: "{{ setting.value }}"
+  loop:
+    - option: sonar.web.javaAdditionalOpts
+      value: "-javaagent:./extensions/plugins/sonarqube-community-branch-plugin-{{ sonarqube_branch_plugin_version }}.jar=web"
+    - option: sonar.ce.javaAdditionalOpts
+      value: "-javaagent:./extensions/plugins/sonarqube-community-branch-plugin-{{ sonarqube_branch_plugin_version }}.jar=ce"
+  loop_control:
+    loop_var: setting
+- name: Enable and start SonarQube service
+  ansible.builtin.systemd:
+    name: sonarqube
+    state: restarted

@@ -1,6 +1,5 @@
 - name: Deploy SonarQube rpm package
   hosts: "{{ target_group }}"
-  # connection: local
   vars_files:
     - ./vars/main.yml
   pre_tasks:
@@ -41,18 +40,16 @@
           value: "{{ sonarqube_port }}"
         - option: sonar.web.host
           value: "0.0.0.0"
-        - option: sonar.web.https.port
-          value: "{{ sonarqube_https_port }}"
-        - option: sonar.web.ssl.port
-          value: "{{ sonarqube_https_port }}"
-        # - option: sonar.web.https.keyAlias
-        #   value: "{{ sonarqube_https_alias }}"
-        - option: sonar.web.https.keystoreFile
-          value: "{{ sonarqube_keystore_file }}"
-        - option: sonar.web.https.keyStoreType
-          value: PKCS12
-        - option: sonar.web.https.keyPass
-          value: "{{ sonarqube_keystore_password }}"
+        # - option: sonar.web.https.port
+        #   value: "{{ sonarqube_https_port }}"
+        # - option: sonar.web.ssl.port
+        #   value: "{{ sonarqube_https_port }}"
+        # - option: sonar.web.https.keystoreFile
+        #   value: "{{ sonarqube_keystore_file }}"
+        # - option: sonar.web.https.keyStoreType
+        #   value: PKCS12
+        # - option: sonar.web.https.keyPass
+        #   value: "{{ sonarqube_keystore_password }}"
       loop_control:
         loop_var: setting
     - name: Update sysctl values
@@ -68,44 +65,6 @@
         - { name: kernel.pid_max, value: 65536 }
       loop_control:
         loop_var: sysctl_setting
-    # - name: Ensure the SonarQube Keystore directory exists
-    #   ansible.builtin.file:
-    #     path: "{{ sonarqube_keystore_file | dirname }}"
-    #     state: directory
-    #     owner: sonarqube
-    #     group: sonarqube
-    #     mode: "0750"
-    # - name: Ensure any exiting keystore file is removed before creating a new one
-    #   ansible.builtin.file:
-    #     path: "{{ sonarqube_keystore_file }}"
-    #     state: absent
-    # - name: Create PKCS#12 keystore
-    #   ansible.builtin.command:
-    #     argv:
-    #       - openssl
-    #       - pkcs12
-    #       - -export
-    #       - -out
-    #       - "{{ sonarqube_keystore_file }}"
-    #       - -inkey
-    #       - "{{ sonarqube_tls_key }}"
-    #       - -in
-    #       - "{{ sonarqube_tls_cert }}"
-    #       - -certfile
-    #       - "{{ sonarqube_tls_ca_chain }}"
-    #       - -name
-    #       - "{{ sonarqube_https_alias }}"
-    #       - -passout
-    #       - "pass:{{ sonarqube_keystore_password }}"
-    #   args:
-    #     creates: "{{ sonarqube_keystore_file }}"
-    #   no_log: true
-    # - name: Ensure the SonarQube keystore is owned by the SonarQube service account
-    #   ansible.builtin.file:
-    #     path: "{{ sonarqube_keystore_file }}"
-    #     owner: sonarqube
-    #     group: sonarqube
-    #     mode: "0640"
     - name: Enable and start SonarQube service
       ansible.builtin.systemd:
         name: sonarqube
@@ -127,7 +86,6 @@
         ftype: f
         setype: cert_t
         state: present
-
     - name: Apply labels
       become: true
       ansible.builtin.command:
@@ -150,50 +108,8 @@
         name: nginx
         enabled: true
         state: restarted
-    - name: Setup the Branch Plugin and Web App for SonarQube
-      vars:
-        plugin_version: "26.5.0"
-      block:
-        - name: Download Branch Plugin
-          ansible.builtin.get_url:
-            url: "https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/{{ plugin_version }}/sonarqube-community-branch-plugin-{{ plugin_version }}.jar"
-            dest: "/opt/sonarqube/extensions/plugins/sonarqube-community-branch-plugin-{{ plugin_version }}.jar"
-            mode: '0644'
-        # - name: Download Web App
-        #   ansible.builtin.get_url:
-        #     url: "https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/{{ plugin_version }}/sonarqube-webapp.zip"
-        #     dest: /opt/sonarqube/extensions/webapp/sonarqube-webapp.zip
-        #     mode: '0644'
-        - name: Remove the existing web folder
-          ansible.builtin.file:
-            path: /opt/sonarqube/web
-            state: "{{ state }}"
-            owner: sonarqube
-            group: sonarqube
-          loop:
-            - absent
-            - directory
-          loop_control:
-            loop_var: state
-        - name: Unzip Web App
-          ansible.builtin.unarchive:
-            src: "https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/{{ plugin_version }}/sonarqube-webapp.zip"
-            dest: /opt/sonarqube/web
-            remote_src: true
-            owner: sonarqube
-            group: sonarqube
-        - name: Update sonar.properties with the correct JDBC URL
-          community.general.ini_file:
-            path: /opt/sonarqube/conf/sonar.properties
-            no_extra_spaces: true
-            option: "{{ setting.option }}"
-            value: "{{ setting.value }}"
-          loop:
-            - option: sonar.web.javaAdditionalOpts
-              value: "-javaagent:./extensions/plugins/sonarqube-community-branch-plugin-{{ plugin_version }}.jar=web"
-            - option: sonar.ce.javaAdditionalOpts
-              value: "-javaagent:./extensions/plugins/sonarqube-community-branch-plugin-{{ plugin_version }}.jar=ce"
-          loop_control:
-            loop_var: setting
+    - name: Setup branch plugin
+      ansible.builtin.include_tasks:
+        file: branch-plugin.yml
 
 
