@@ -12,7 +12,8 @@ sonarqube_pg_pass: !vault |
           6461363032303362360a356232633236313463393536663136306633643464396561393433326135
           34386533336633663166346363326564316337356332633065363539356134656661
 # sonarqube_tls_dir: /opt/sonarqube/conf/tls
-sonarqube_tls_dir: /letsencrypt-certs
+# sonarqube_tls_dir: /letsencrypt-certs
+sonarqube_tls_dir: /etc/nginx/ssl
 sonarqube_keystore_file: /opt/sonarqube/conf/tls/sonarqube.p12
 
 sonarqube_tls_key: "{{ sonarqube_tls_dir }}/jamesjonesconsulting.com.key"
