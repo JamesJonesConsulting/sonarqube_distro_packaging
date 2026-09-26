@@ -54,5 +54,8 @@ chown -R "${SERVICE_USER}:${SERVICE_GROUP}" "${SONARQUBE_HOME}"
 
 chmod +x /opt/sonarqube/bin/linux-x86-64/sonar.sh
 systemctl daemon-reload
+sysctl --system
+firewall-cmd --permanent --add-service=https
+firewall-cmd --reload
 
 exit 0
