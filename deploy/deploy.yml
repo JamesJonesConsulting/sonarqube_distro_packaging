@@ -172,7 +172,7 @@
             group: sonarqube
           loop:
             - absent
-            - present
+            - directory
           loop_control:
             loop_var: state
         - name: Unzip Web App
