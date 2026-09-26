@@ -139,5 +139,10 @@
         owner: root
         group: root
         mode: '0644'
+    - name: Enable and start SonarQube service
+      ansible.builtin.systemd:
+        name: nginx
+        enabled: true
+        state: restarted
 
 # chcon -t httpd_config_t /etc/nginx/nginx.conf
