@@ -110,6 +110,6 @@
         state: restarted
     - name: Setup branch plugin
       ansible.builtin.include_tasks:
-        file: branch-plugin.yml
+        file: tasks/branch-plugin.yml
 
 
