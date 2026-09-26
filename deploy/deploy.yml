@@ -139,6 +139,12 @@
         owner: root
         group: root
         mode: '0644'
+    - name: Allow NGINX to connect to upstream services
+      become: true
+      ansible.posix.seboolean:
+        name: httpd_can_network_connect
+        state: true
+        persistent: true
     - name: Enable and start Nginx service
       ansible.builtin.systemd:
         name: nginx
