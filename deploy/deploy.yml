@@ -91,3 +91,10 @@
         owner: sonarqube
         group: sonarqube
         mode: "0640"
+    - name: Enable and start SonarQube service
+      ansible.builtin.systemd:
+        name: sonarqube
+        enabled: true
+        state: restart
+        daemon_reload: true
+  
