@@ -177,7 +177,7 @@
             loop_var: state
         - name: Unzip Web App
           ansible.builtin.unarchive:
-            url: "https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/{{ plugin_version }}/sonarqube-webapp.zip"
+            src: "https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/{{ plugin_version }}/sonarqube-webapp.zip"
             dest: /opt/sonarqube/web
             remote_src: true
             owner: sonarqube
