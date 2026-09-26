@@ -112,6 +112,26 @@
         enabled: true
         state: restarted
         daemon_reload: true
+    - name: Label the SSL directory
+      become: true
+      community.general.sefcontext:
+        target: '/etc/nginx/ssl'
+        ftype: d
+        setype: cert_t
+        state: present
+
+    - name: Label files under the SSL directory
+      become: true
+      community.general.sefcontext:
+        target: '/etc/nginx/ssl(/.*)?'
+        ftype: f
+        setype: cert_t
+        state: present
+
+    - name: Apply labels
+      become: true
+      ansible.builtin.command:
+        cmd: restorecon -RFv /etc/nginx/ssl
     - name: Add SonarQube Nginx configuration
       ansible.builtin.template:
         src: templates/sonarqube-nginx.conf
@@ -119,3 +139,5 @@
         owner: root
         group: root
         mode: '0644'
+
+# chcon -t httpd_config_t /etc/nginx/nginx.conf
