@@ -22,3 +22,7 @@ sonarqube_tls_ca_chain: "{{ sonarqube_tls_dir }}/jamesjonesconsulting.com.cachai
 sonarqube_https_port: 443
 sonarqube_https_alias: sonarqube
 sonarqube_keystore_password: sonarqube
+
+# plugin_urls:
+#   - https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/26.5.0/sonarqube-community-branch-plugin-26.5.0.jar
+#   https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/26.5.0/sonarqube-webapp.zip

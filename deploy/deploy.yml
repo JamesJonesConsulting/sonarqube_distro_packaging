@@ -150,5 +150,50 @@
         name: nginx
         enabled: true
         state: restarted
+    - name: Setup the Branch Plugin and Web App for SonarQube
+      vars:
+        plugin_version: "26.5.0"
+      block:
+        - name: Download Branch Plugin
+          ansible.builtin.get_url:
+            url: "https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/{{ plugin_version }}/sonarqube-community-branch-plugin-{{ plugin_version }}.jar"
+            dest: "/opt/sonarqube/extensions/plugins/sonarqube-community-branch-plugin-{{ plugin_version }}.jar"
+            mode: '0644'
+        # - name: Download Web App
+        #   ansible.builtin.get_url:
+        #     url: "https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/{{ plugin_version }}/sonarqube-webapp.zip"
+        #     dest: /opt/sonarqube/extensions/webapp/sonarqube-webapp.zip
+        #     mode: '0644'
+        - name: Remove the existing web folder
+          ansible.builtin.file:
+            path: /opt/sonarqube/web
+            state: "{{ state }}"
+            owner: sonarqube
+            group: sonarqube
+          loop:
+            - absent
+            - present
+          loop_control:
+            loop_var: state
+        - name: Unzip Web App
+          ansible.builtin.unarchive:
+            url: "https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/{{ plugin_version }}/sonarqube-webapp.zip"
+            dest: /opt/sonarqube/web
+            remote_src: true
+            owner: sonarqube
+            group: sonarqube
+        - name: Update sonar.properties with the correct JDBC URL
+          community.general.ini_file:
+            path: /opt/sonarqube/conf/sonar.properties
+            no_extra_spaces: true
+            option: "{{ setting.option }}"
+            value: "{{ setting.value }}"
+          loop:
+            - option: sonar.web.javaAdditionalOpts
+              value: "-javaagent:./extensions/plugins/sonarqube-community-branch-plugin-{{ plugin_version }}.jar=web"
+            - option: sonar.ce.javaAdditionalOpts
+              value: "-javaagent:./extensions/plugins/sonarqube-community-branch-plugin-{{ plugin_version }}.jar=ce"
+          loop_control:
+            loop_var: setting
 
-# chcon -t httpd_config_t /etc/nginx/nginx.conf
+
