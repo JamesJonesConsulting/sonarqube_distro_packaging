@@ -95,6 +95,6 @@
       ansible.builtin.systemd:
         name: sonarqube
         enabled: true
-        state: restart
+        state: restarted
         daemon_reload: true
   
