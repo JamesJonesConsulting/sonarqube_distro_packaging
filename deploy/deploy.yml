@@ -39,6 +39,8 @@
           value: "jdbc:postgresql://{{ sonarqube_host }}:{{ sonarqube_port }}/{{ sonarqube_db }}?currentSchema=public"
         - option: sonar.web.https.port
           value: "{{ sonarqube_https_port }}"
+        - option: sonar.web.ssl.port
+          value: "{{ sonarqube_https_port }}"
         # - option: sonar.web.https.keyAlias
         #   value: "{{ sonarqube_https_alias }}"
         - option: sonar.web.https.keystoreFile
@@ -48,7 +50,7 @@
         - option: sonar.web.https.keyPass
           value: "{{ sonarqube_keystore_password }}"
         - option: sonar.web.port
-          value: "-1"
+          value: "9000"
         - option: sonar.web.host
           value: "0.0.0.0"
       loop_control:
@@ -110,4 +112,4 @@
         enabled: true
         state: restarted
         daemon_reload: true
-  
+  /etc/nginx/conf.d/sonarqube.conf

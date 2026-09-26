@@ -102,16 +102,19 @@ steps:
         --config-files /opt/sonarqube/conf/sonar.properties \
         --config-files /etc/sysctl.d/99-sonarqube.conf \
         --config-files /etc/sysconfig/sonarqube \
+        --config-files /etc/nginx/conf.d/sonarqube.conf \
         --before-install ./defaults/sonarqube-install.sh \
         --after-install ./defaults/sonarqube-install.sh \
         --after-upgrade ./defaults/sonarqube-install.sh \
         -d "java-25-openjdk" \
         -d "openssl" \
+        -d "nginx" \
         ./sonarqube/.=/opt/sonarqube \
         ./defaults/sonar.properties=/opt/sonarqube/conf/sonar.properties \
         ./defaults/99-sonarqube.conf=/etc/sysctl.d/99-sonarqube.conf \
         ./defaults/sonarqube.service=/etc/systemd/system/sonarqube.service \
-        ./defaults/sonarqube.sysconfig=/etc/sysconfig/sonarqube
+        ./defaults/sonarqube.sysconfig=/etc/sysconfig/sonarqube \
+        ./defaults/sonarqube-nginx.conf=/etc/nginx/conf.d/sonarqube.conf
 
     displayName: Build the RPM package
     workingDirectory: $(Build.SourcesDirectory)/pipeline
