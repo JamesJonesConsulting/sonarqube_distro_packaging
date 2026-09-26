@@ -41,18 +41,27 @@
           value: "{{ sonarqube_https_port }}"
         # - option: sonar.web.https.keyAlias
         #   value: "{{ sonarqube_https_alias }}"
-        - option: sonar.web.https.keyStore
+        - option: sonar.web.https.keystoreFile
           value: "{{ sonarqube_keystore_file }}"
-        # - option: sonar.web.https.keyStoreType
-        #   value: PKCS12
-        - option: sonar.web.https.keyStorePassword
+        - option: sonar.web.https.keyStoreType
+          value: PKCS12
+        - option: sonar.web.https.keyPass
           value: "{{ sonarqube_keystore_password }}"
         - option: sonar.web.port
-          value: "9000"
+          value: "-1"
         - option: sonar.web.host
           value: "0.0.0.0"
       loop_control:
         loop_var: setting
+# # Setup HTTPS keystore
+# sonar.web.https.port=443
+# sonar.web.https.keyPass=your_password
+# sonar.web.https.keystoreFile=C:/Path/To/Your/SonarQube/conf/your_keystore.p12
+# sonar.web.https.keystoreType=PKCS12
+
+# # disable HTTP access
+# sonar.web.port=-1
+
     - name: Update sysctl values
       ansible.posix.sysctl:
         name: "{{ sysctl_setting.name }}"
