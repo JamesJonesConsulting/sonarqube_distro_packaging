@@ -53,6 +53,19 @@
           value: "0.0.0.0"
       loop_control:
         loop_var: setting
+    - name: Update sysctl values
+      ansible.posix.sysctl:
+        name: "{{ sysctl_setting.name }}"
+        value: "{{ sysctl_setting.value }}"
+        state: present
+        sysctl_file: /etc/sysctl.d/99-sonarqube.conf
+      loop:
+        - { name: net.ipv4.ip_unprivileged_port_start, value: 443 }
+        - { name: vm.max_map_count, value: 524288 }
+        - { name: fs.file-max, value: 131072 }
+        - { name: kernel.pid_max, value: 65536 }
+      loop_control:
+        loop_var: sysctl_setting
     - name: Ensure the SonarQube Keystore directory exists
       ansible.builtin.file:
         path: "{{ sonarqube_keystore_file | dirname }}"
