@@ -113,7 +113,7 @@
         state: restarted
         daemon_reload: true
     - name: Add SonarQube Nginx configuration
-      ansible.builtin.copy:
+      ansible.builtin.template:
         src: templates/sonarqube-nginx.conf
         dest: /etc/nginx/conf.d/sonarqube.conf
         owner: root
