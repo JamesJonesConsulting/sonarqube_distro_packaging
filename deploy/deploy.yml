@@ -40,16 +40,6 @@
           value: "{{ sonarqube_port }}"
         - option: sonar.web.host
           value: "0.0.0.0"
-        # - option: sonar.web.https.port
-        #   value: "{{ sonarqube_https_port }}"
-        # - option: sonar.web.ssl.port
-        #   value: "{{ sonarqube_https_port }}"
-        # - option: sonar.web.https.keystoreFile
-        #   value: "{{ sonarqube_keystore_file }}"
-        # - option: sonar.web.https.keyStoreType
-        #   value: PKCS12
-        # - option: sonar.web.https.keyPass
-        #   value: "{{ sonarqube_keystore_password }}"
       loop_control:
         loop_var: setting
     - name: Update sysctl values
@@ -78,7 +68,6 @@
         ftype: d
         setype: cert_t
         state: present
-
     - name: Label files under the SSL directory
       become: true
       community.general.sefcontext:
@@ -87,7 +76,6 @@
         setype: cert_t
         state: present
     - name: Apply labels
-      become: true
       ansible.builtin.command:
         cmd: restorecon -RFv /etc/nginx/ssl
     - name: Add SonarQube Nginx configuration
@@ -111,5 +99,3 @@
     - name: Setup branch plugin
       ansible.builtin.include_tasks:
         file: tasks/branch-plugin.yml
-
-
