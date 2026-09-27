@@ -11,8 +11,6 @@ sonarqube_pg_pass: !vault |
           32383162303261653538343434323064353634366138343139393736663531366235623665616463
           6461363032303362360a356232633236313463393536663136306633643464396561393433326135
           34386533336633663166346363326564316337356332633065363539356134656661
-# sonarqube_tls_dir: /opt/sonarqube/conf/tls
-# sonarqube_tls_dir: /letsencrypt-certs
 sonarqube_branch_plugin_version: "26.5.0"
 sonarqube_tls_dir: /etc/nginx/ssl
 sonarqube_keystore_file: /opt/sonarqube/conf/tls/sonarqube.p12
@@ -25,6 +23,3 @@ sonarqube_https_port: 443
 sonarqube_https_alias: sonarqube
 sonarqube_keystore_password: sonarqube
 
-# plugin_urls:
-#   - https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/26.5.0/sonarqube-community-branch-plugin-26.5.0.jar
-#   https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/26.5.0/sonarqube-webapp.zip
