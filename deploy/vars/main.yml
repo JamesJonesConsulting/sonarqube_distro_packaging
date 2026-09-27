@@ -18,7 +18,8 @@ sonarqube_tls_dir: /etc/nginx/ssl
 sonarqube_keystore_file: /opt/sonarqube/conf/tls/sonarqube.p12
 
 sonarqube_tls_key: "{{ sonarqube_tls_dir }}/jamesjonesconsulting.com.key"
-sonarqube_tls_cert: "{{ sonarqube_tls_dir }}/jamesjonesconsulting.com.crt"
+sonarqube_tls_cert: "{{ sonarqube_tls_dir }}/jamesjonesconsulting.com.fullchain"
+# sonarqube_tls_cert: "{{ sonarqube_tls_dir }}/jamesjonesconsulting.com.crt"
 sonarqube_tls_ca_chain: "{{ sonarqube_tls_dir }}/jamesjonesconsulting.com.cachain"
 sonarqube_https_port: 443
 sonarqube_https_alias: sonarqube
