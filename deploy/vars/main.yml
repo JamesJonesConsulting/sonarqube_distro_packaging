@@ -22,4 +22,3 @@ sonarqube_tls_ca_chain: "{{ sonarqube_tls_dir }}/jamesjonesconsulting.com.cachai
 sonarqube_https_port: 443
 sonarqube_https_alias: sonarqube
 sonarqube_keystore_password: sonarqube
-
