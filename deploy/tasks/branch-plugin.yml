@@ -23,7 +23,7 @@
 - name: Unzip Web App
   ansible.builtin.unarchive:
     src: >-
-      "{{ sonarqube_branch_plugin_base_url }}{{ sonarqube_branch_plugin_version }}/sonarqube-webapp.zip"
+      {{ sonarqube_branch_plugin_base_url }}{{ sonarqube_branch_plugin_version }}/sonarqube-webapp.zip
     dest: /opt/sonarqube/web
     remote_src: true
     owner: sonarqube
