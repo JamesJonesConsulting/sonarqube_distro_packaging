@@ -2,11 +2,11 @@
 - name: Set download base URL for SonarQube Branch Plugin
   ansible.builtin.set_fact:
     sonarqube_branch_plugin_base_url: >-
-      "https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/"
+      https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/
 - name: Download Branch Plugin
   ansible.builtin.get_url:
     url: >-
-      "{{ sonarqube_branch_plugin_base_url }}{{ sonarqube_branch_plugin_version }}/sonarqube-community-branch-plugin-{{ sonarqube_branch_plugin_version }}.jar"
+      {{ sonarqube_branch_plugin_base_url }}{{ sonarqube_branch_plugin_version }}/sonarqube-community-branch-plugin-{{ sonarqube_branch_plugin_version }}.jar
     dest: "/opt/sonarqube/extensions/plugins/sonarqube-community-branch-plugin-{{ sonarqube_branch_plugin_version }}.jar"
     mode: '0644'
 - name: Remove the existing web folder
